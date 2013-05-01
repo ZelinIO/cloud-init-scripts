@@ -1,0 +1,9 @@
+The cloud scripts we wrote for initializing VMs.
+
+This just includes the scripts we wrote rather than cloud-init source repo.
+
+[Reference]
+cloud-init-window: https://github.com/cloudbase/cloudbase-init
+cloud-init-launchpad (linux): https://launchpad.net/cloud-init
+cloud-init is also available in EPEL for CentOS, Fedora & Redhat Families etc.
+
