@@ -7,7 +7,6 @@ import platform
 import re
 import logging
 import datetime
-import iso8601
 import sys
 import os
 
@@ -19,48 +18,23 @@ LOCAL_DATA_PATH = "/etc/cloud/local/data"
 META_URL = "http://169.254.169.254/openstack/2013-04-04/meta_data.json"
 SCRIPTS_DIR = "/etc/cloud/scripts/"
 
-TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
-PERFECT_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
-
-
-def parse_isotime(timestr):
-    """Parse time from ISO 8601 format"""
-    try:
-        return iso8601.parse_date(timestr)
-    except iso8601.ParseError as e:
-        raise ValueError(e.message)
-    except TypeError as e:
-        raise ValueError(e.message)
-
-
-def normalize_time(timestamp):
-    """Normalize time (datetype) in arbitrary timezone to UTC naive object"""
-    offset = timestamp.utcoffset()
-    if offset is None:
-        return timestamp
-    return timestamp.replace(tzinfo=None) - offset
-
-def timestampfromutc(utc):
-    delta = normalize_time(utc) - datetime.datetime.utcfromtimestamp(0)
-    return ((delta.days * 24 * 3600) + delta.seconds + float(delta.microseconds) / (10 ** 6))
-
 def _change_password(passwd):
     exe_script = '%schpw.sh "%s"' % (SCRIPTS_DIR, passwd)
     call(exe_script.encode('unicode-escape'), shell=True) 
 
-def change_password(passwd):
+def change_password(passwd, p_server_date):
     try:
         f = open(LOCAL_DATA_PATH, "r")
-        p_local_stamp = json.load(f)['password_date']
-        if p_local_stamp < p_server_stamp:
+        p_local_date = json.load(f)['password_date']
+        if p_local_date != p_server_date:
             f.close()
             with open(LOCAL_DATA_PATH, "w") as nf:
                 _change_password(passwd)
-                json.dump({"password_date" : p_server_stamp}, nf)
+                json.dump({"password_date" : p_server_date}, nf)
     except (IOError, ValueError) as e:
         with open(LOCAL_DATA_PATH, "w") as f:
             _change_password(passwd)
-            json.dump({"password_date" : p_server_stamp}, f)
+            json.dump({"password_date" : p_server_date}, f)
     except Exception as e:
         logger.error("Error during updating password! %s" % str(e))
         sys.exit("Script exit unexpectedly!")
@@ -82,8 +56,7 @@ try:
     data_dict = json.loads(data)
     passwd = data_dict['meta']['password']
     p_server_date = data_dict['meta']['password_date']
-    p_server_stamp = timestampfromutc(parse_isotime(p_server_date))
-    change_password(passwd)
+    change_password(passwd, p_server_date)
 #    resizefs()
 
 except Exception as e:
