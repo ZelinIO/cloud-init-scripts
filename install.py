@@ -28,9 +28,12 @@ ret = call("lsmod | grep virtio 1>retfile", shell = True)
 try:
     if ret == 0 and os.stat("retfile").st_size >= 0:
         _deply_cfg()
+        call("rm -rf retfile", shell = True)
     else:
+        call("rm -rf retfile", shell = True)
         print "Virtio is not installed!\n"
         sys.exit("Terminated unexpectedly!\n")
+    
 except Exception as e:
     print str(e)
     sys.exit("Terminated unexpectedly!\n")
