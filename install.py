@@ -26,10 +26,10 @@ def _deply_cfg():
     ret += call("mkdir /etc/cloud/scripts 1>>testcfg", shell = True)
     ret += call("mkdir -p /var/lib/cloud/scripts/per-boot 1>>testcfg", shell = True)
     ret += call("mkdir -p /var/lib/cloud/scripts/per-once 1>>testcfg", shell = True)
-    ret += call("cp cloud.cfg /etc/cloud/", shell = True) 
-    ret += call("cp chpw.sh /etc/cloud/scripts", shell = True) 
-    ret += call("cp cloud_script.py /var/lib/cloud/scripts/per-boot/", shell = True) 
-    ret += call("cp repartition.sh /var/lib/cloud/scripts/per-once/", shell = True) 
+    ret += call("cp -f cloud.cfg /etc/cloud/", shell = True) 
+    ret += call("cp -f chpw.sh /etc/cloud/scripts", shell = True) 
+    ret += call("cp -f cloud_script.py /var/lib/cloud/scripts/per-boot/", shell = True) 
+    ret += call("cp -f repartition.sh /var/lib/cloud/scripts/per-once/", shell = True) 
     if ret != 0:
         print "Error occur when copying files!\n"
         sys.exit("Terminated unexpectedly!\n")
