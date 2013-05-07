@@ -52,5 +52,6 @@ ps:
 
 Shutdown VM
 ===========
-Shutdown VM, Not reboot vm!
-The image is ready for glance and cinder.
+Shutdown VM! **Don't** reboot vm! Reboot will destroy the previous configuration.     
+
+The image is ready for glance and cinder. 
