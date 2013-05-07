@@ -29,6 +29,6 @@ echo -e "w" >> $parms
 fdisk /dev/vda < $parms
 touch /etc/cloud/local/has_partitioned
 echo -e "re_partion" >> /etc/cloud/order.log
-#reboot
+reboot
 #sleep 10s
 
